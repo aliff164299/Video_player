@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Watch | WWE Network Style</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header id="hdr" class="solid">
+  <a class="logo" href="index.html"><b><i>WWE</i></b><span>Network</span></a>
+  <nav><a href="index.html">Home</a><a href="index.html#rows">Browse</a></nav>
+  <div class="right"><div class="live"><span class="dot"></span><span>LIVE</span></div></div>
+</header>
+
+<main class="watch">
+  <a class="back" href="index.html"><svg viewBox="0 0 24 24"><path d="M15.4 5.4 14 4l-8 8 8 8 1.4-1.4L8.8 12z"/></svg>Back to Browse</a>
+
+  <div class="frame"><div class="player" id="player"></div></div>
+
+  <div class="info">
+    <div class="tag">Now Playing</div>
+    <h1 id="title">WWE</h1>
+    <div class="btns">
+      <a class="btn more" id="yt" target="_blank" rel="noopener" href="#">Watch on YouTube</a>
+    </div>
+    <p class="note" id="note" hidden>This page was opened from a file, and YouTube blocks embedded playback there. Host the site (for example on GitHub Pages) to play inside the page.</p>
+  </div>
+
+  <div id="more"></div>
+</main>
+
+<footer>FAN-MADE PLAYER PAGE &bull; NOT AFFILIATED WITH WWE</footer>
+
+<script src="videos.js"></script>
+<script>
+  var params = new URLSearchParams(location.search);
+  var id = params.get('v') || VIDEOS[0].id;
+  var current = VIDEOS.filter(function (v) { return v.id === id; })[0] || { id: id, title: 'WWE' };
+
+  document.getElementById('title').textContent = current.title;
+  document.getElementById('yt').href = ytUrl(id);
+  var player = document.getElementById('player');
+
+  if (location.protocol === 'file:') {
+    // YouTube blocks embeds on file:// pages (error 153): show poster that opens YouTube
+    player.innerHTML = '<a class="poster" target="_blank" rel="noopener" href="' + ytUrl(id) + '" style="background-image:' + thumb(id) + '">' +
+      '<div class="pi"><i>' + PLAY_SVG + '</i></div></a>';
+    document.getElementById('note').hidden = false;
+  } else {
+    var f = document.createElement('iframe');
+    f.src = 'https://www.youtube.com/embed/' + encodeURIComponent(id) + '?autoplay=1&rel=0&origin=' + encodeURIComponent(location.origin);
+    f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    f.allowFullscreen = true;
+    f.referrerPolicy = 'strict-origin-when-cross-origin';
+    f.title = 'Video player';
+    player.appendChild(f);
+  }
+
+  /* More to watch: only shown when there are other videos */
+  var others = VIDEOS.filter(function (v) { return v.id !== id; });
+  if (others.length) {
+    addRow(document.getElementById('more'), 'More to Watch', others.map(function (v) { return cardHTML(v, ''); }).join(''));
+  }
+
+  loadTitles(function (v) {
+    if (v.id === id) {
+      document.getElementById('title').textContent = v.title;
+      document.title = v.title + ' | WWE Network';
+    }
+  });
+</script>
+</body>
+</html>
