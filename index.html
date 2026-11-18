@@ -18,7 +18,7 @@
 </header>
 
 <section class="hero">
-  <div class="hero-bg" id="heroBg"></div>
+  <div id="heroBgs"></div>
   <div class="hero-body">
     <div class="tag">Featured</div>
     <h1 id="heroTitle">WWE</h1>
@@ -31,6 +31,7 @@
       <a class="btn more" id="heroYt" target="_blank" rel="noopener" href="#">Watch on YouTube</a>
     </div>
   </div>
+  <div class="dots" id="dots"></div>
 </section>
 
 <main class="rows" id="rows"></main>
@@ -39,11 +40,63 @@
 
 <script src="videos.js"></script>
 <script>
+  var INTERVAL = 6000;           // milliseconds per slide
   var main = VIDEOS[0];
-  document.getElementById('heroBg').style.backgroundImage = thumb(main.id);
-  document.getElementById('heroTitle').textContent = main.title;
-  document.getElementById('heroPlay').href = pageUrl(main.id);
-  document.getElementById('heroYt').href = ytUrl(main.id);
+  var bgs = document.getElementById('heroBgs');
+  var dots = document.getElementById('dots');
+  var body = document.querySelector('.hero-body');
+  var cur = 0, timer = null;
+
+  VIDEOS.forEach(function (v, i) {
+    var d = document.createElement('div');
+    d.className = 'hero-bg';
+    d.style.backgroundImage = thumb(v.id);
+    bgs.appendChild(d);
+    if (VIDEOS.length > 1) {
+      var b = document.createElement('button');
+      b.setAttribute('aria-label', 'Show featured video ' + (i + 1));
+      b.addEventListener('click', function () { show(i, true); });
+      dots.appendChild(b);
+    }
+  });
+
+  function fillText(v) {
+    document.getElementById('heroTitle').textContent = v.title;
+    document.getElementById('heroPlay').href = pageUrl(v.id);
+    document.getElementById('heroYt').href = ytUrl(v.id);
+  }
+
+  function show(i, restart) {
+    var first = (timer === null && !restart && i === 0 && !bgs.querySelector('.on'));
+    var v = VIDEOS[i];
+    var layers = bgs.children, btns = dots.children;
+    if (first) { fillText(v); }
+    else {
+      body.classList.add('swap');
+      setTimeout(function () { fillText(v); body.classList.remove('swap'); }, 350);
+    }
+    for (var k = 0; k < layers.length; k++) layers[k].classList.toggle('on', k === i);
+    for (var j = 0; j < btns.length; j++) {
+      btns[j].classList.remove('on');
+      if (j === i) { void btns[j].offsetWidth; btns[j].classList.add('on'); }
+    }
+    cur = i;
+    schedule();
+  }
+
+  function schedule() {
+    clearTimeout(timer);
+    if (VIDEOS.length < 2) { timer = 0; return; }
+    dots.style.setProperty('--dur', INTERVAL + 'ms');
+    timer = setTimeout(function () { show((cur + 1) % VIDEOS.length); }, INTERVAL);
+  }
+
+  /* Pause while the pointer is over the banner */
+  var hero = document.querySelector('.hero');
+  hero.addEventListener('mouseenter', function () { clearTimeout(timer); dots.classList.add('paused'); });
+  hero.addEventListener('mouseleave', function () { dots.classList.remove('paused'); show(cur, true); });
+
+  show(0);
 
   var rows = document.getElementById('rows');
   addRow(rows, 'Top 10 on Network Today', VIDEOS.slice(0, 10).map(function (v, i) {
@@ -52,10 +105,8 @@
   addRow(rows, 'Featured Events', VIDEOS.map(function (v) { return cardHTML(v, 'FULL EVENT'); }).join(''));
 
   loadTitles(function (v) {
-    if (v === main) {
-      document.getElementById('heroTitle').textContent = v.title;
-      document.title = v.title + ' | WWE Network';
-    }
+    if (v === VIDEOS[cur]) document.getElementById('heroTitle').textContent = v.title;
+    if (v === main) document.title = v.title + ' | WWE Network';
   });
 </script>
 </body>
