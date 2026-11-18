@@ -1,4 +1,4 @@
-/* ===== ADD YOUR VIDEOS HERE =====
+/* ===== ADD YOUR VIDEOS HERE ===== 
    Paste the YouTube video ID (the part after youtu.be/ or v=, before the ?).
    Thumbnails and titles load automatically. */
 var VIDEOS = [
