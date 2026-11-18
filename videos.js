@@ -2,7 +2,8 @@
    Paste the YouTube video ID (the part after youtu.be/ or v=, before the ?).
    Thumbnails and titles load automatically. */
 var VIDEOS = [
-  { id: '4Bgg4P-xnHY', title: 'WWE' }
+  { id: '4Bgg4P-xnHY', title: 'WWE' },
+  { id: 'Foo68FWpv24', title: 'Beast in the East' }
 ];
 
 var PLAY_SVG = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
