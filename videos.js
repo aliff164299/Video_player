@@ -3,7 +3,8 @@
    Thumbnails and titles load automatically. */
 var VIDEOS = [
   { id: '4Bgg4P-xnHY', title: 'WWE' },
-  { id: 'Foo68FWpv24', title: 'Beast in the East' }
+  { id: 'Foo68FWpv24', title: 'Beast in the East' },
+  { id: 'TVE-qhyacJE', title: 'Summerslam 2009'   }
 ];
 
 var PLAY_SVG = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
